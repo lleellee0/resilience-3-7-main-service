@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+resilience4j.circuitbreaker:
+  instances:
+    # Circuit Breaker 인스턴스 이름 (코드에서 @CircuitBreaker 어노테이션에 사용할 이름)
+    mailService:
+      # 실패율 임계값 (이 비율 이상 실패 시 Open)
+      failureRateThreshold: 30 # 예: 30%
+      # 슬라이딩 윈도우 타입: COUNT_BASED 또는 TIME_BASED
+      slidingWindowType: COUNT_BASED
+      # COUNT_BASED 일 때: 실패율 계산에 사용할 최근 호출 수
+      slidingWindowSize: 10 # 예: 최근 10번 호출 기준
+      # TIME_BASED 일 때: 실패율 계산에 사용할 시간 (예: 60s)
+      # slidingWindowSize: 60
+      # 실패율 계산을 시작하기 위한 최소 호출 수
+      minimumNumberOfCalls: 5 # 예: 최소 5번 호출 필요
+      # Circuit이 Open 상태로 유지되는 시간 (이후 HALF_OPEN 시도)
+      waitDurationInOpenState: 10s # 예: 10초
+      # HALF_OPEN 상태에서 허용할 테스트 호출 수 (성공 시 CLOSED, 실패 시 다시 OPEN)
+      permittedNumberOfCallsInHalfOpenState: 3 # 예: 3번
+      # === 중요: 실패로 기록할 예외 ===
+      # 지정된 예외 및 이 예외의 모든 하위 타입 예외 발생 시 실패로 간주합니다.
+      recordExceptions:
+        - resilience.mainservice.main.circuitbreaker.RecordException
